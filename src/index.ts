@@ -126,6 +126,7 @@ const handleServerStatistics = async () => {
     console.log(
       `[handleServerStatistics] Finished, photos ${statistics.photos}, videos ${statistics.videos}, usage ${statistics.usage}, user count ${statistics.usageByUser.length}`
     );
+    
   } catch(e) {
       console.error(`[handleServerStatistics] recieved error: ${e}`);
   }
