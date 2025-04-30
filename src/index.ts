@@ -67,60 +67,68 @@ export const statisticGauges = {
 };
 
 const handleServerStorage = async () => {
-  console.log("[handleServerStorage] Started");
-
-  const storage = await getImmichServerStorage();
-
-  storageGauges.gaugeStorageDiskAvailable.set(storage.diskAvailableRaw);
-
-  storageGauges.gaugeStorageDiskSize.set(storage.diskSizeRaw);
-
-  storageGauges.gaugeStorageDiskUse.set(storage.diskUseRaw);
-
-  storageGauges.gaugeStorageDiskUsagePercentage.set(
-    storage.diskUsagePercentage
-  );
-
-  console.log(
-    `[handleServerStorage] Finished, available ${storage.diskAvailableRaw}, size ${storage.diskSizeRaw}, use ${storage.diskUseRaw}, percentage ${storage.diskUsagePercentage}`
-  );
+  try {
+    console.log("[handleServerStorage] Started");
+  
+    const storage = await getImmichServerStorage();
+  
+    storageGauges.gaugeStorageDiskAvailable.set(storage.diskAvailableRaw);
+  
+    storageGauges.gaugeStorageDiskSize.set(storage.diskSizeRaw);
+  
+    storageGauges.gaugeStorageDiskUse.set(storage.diskUseRaw);
+  
+    storageGauges.gaugeStorageDiskUsagePercentage.set(
+      storage.diskUsagePercentage
+    );
+  
+    console.log(
+      `[handleServerStorage] Finished, available ${storage.diskAvailableRaw}, size ${storage.diskSizeRaw}, use ${storage.diskUseRaw}, percentage ${storage.diskUsagePercentage}`
+    );
+  } catch(e) {
+      console.error(`[handleServerStorage] recieved error: ${e}`);
+  }
 };
 
 const handleServerStatistics = async () => {
-  console.log("[handleServerStatistics] Started");
-
-  const statistics = await getImmichServerStatistics();
-
-  statisticGauges.gaugeStatisticsPhotoCount.set(statistics.photos);
-
-  statisticGauges.gaugeStatisticsVideosCount.set(statistics.videos);
-
-  statisticGauges.gaugeStatisticsUsage.set(statistics.usage);
-
-  for (const user of statistics.usageByUser) {
-    const labels = {
-      user_id: user.userId,
-      user_name: user.userName,
-    };
-
-    statisticGauges.gaugeStatisticsUserPhotoCount
-      .labels(labels)
-      .set(user.photos);
-
-    statisticGauges.gaugeStatisticsUserVideoCount
-      .labels(labels)
-      .set(user.videos);
-
-    statisticGauges.gaugeStatisticsUserUsage.labels(labels).set(user.usage);
-
-    statisticGauges.gaugeStatisticsUserQuotaBytes
-      .labels(labels)
-      .set(user.quotaSizeInBytes ?? 0);
+  try {
+    console.log("[handleServerStatistics] Started");
+  
+    const statistics = await getImmichServerStatistics();
+  
+    statisticGauges.gaugeStatisticsPhotoCount.set(statistics.photos);
+  
+    statisticGauges.gaugeStatisticsVideosCount.set(statistics.videos);
+  
+    statisticGauges.gaugeStatisticsUsage.set(statistics.usage);
+  
+    for (const user of statistics.usageByUser) {
+      const labels = {
+        user_id: user.userId,
+        user_name: user.userName,
+      };
+  
+      statisticGauges.gaugeStatisticsUserPhotoCount
+        .labels(labels)
+        .set(user.photos);
+  
+      statisticGauges.gaugeStatisticsUserVideoCount
+        .labels(labels)
+        .set(user.videos);
+  
+      statisticGauges.gaugeStatisticsUserUsage.labels(labels).set(user.usage);
+  
+      statisticGauges.gaugeStatisticsUserQuotaBytes
+        .labels(labels)
+        .set(user.quotaSizeInBytes ?? 0);
+    }
+  
+    console.log(
+      `[handleServerStatistics] Finished, photos ${statistics.photos}, videos ${statistics.videos}, usage ${statistics.usage}, user count ${statistics.usageByUser.length}`
+    );
+  } catch(e) {
+      console.error(`[handleServerStatistics] recieved error: ${e}`);
   }
-
-  console.log(
-    `[handleServerStatistics] Finished, photos ${statistics.photos}, videos ${statistics.videos}, usage ${statistics.usage}, user count ${statistics.usageByUser.length}`
-  );
 };
 
 const handleMetricRefresh = async () => {
